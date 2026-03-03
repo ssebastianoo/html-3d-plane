@@ -2,50 +2,7 @@ const screen = document.getElementById("screen");
 
 const pointSize = 10;
 
-let points = [
-  {
-    x: -1,
-    y: 1,
-    z: 1,
-  },
-  {
-    x: 1,
-    y: 1,
-    z: 1,
-  },
-  {
-    x: -1,
-    y: -1,
-    z: 1,
-  },
-  {
-    x: 1,
-    y: -1,
-    z: 1,
-  },
-  {
-    x: -1,
-    y: 1,
-    z: -1,
-  },
-  {
-    x: 1,
-    y: 1,
-    z: -1,
-  },
-  {
-    x: -1,
-    y: -1,
-    z: -1,
-  },
-  {
-    x: 1,
-    y: -1,
-    z: -1,
-  },
-];
-
-let elements = [];
+let points = [];
 
 function cartesianToScreen({ x, y }) {
   return {
@@ -59,18 +16,6 @@ function to2D({ x, y, z }) {
     x: x / z,
     y: y / z,
   };
-}
-
-for (let i = 0; i < points.length; i++) {
-  const el = document.createElement("p");
-  el.innerText = "x";
-  el.style.width = `${pointSize}px`;
-  el.style.height = `${pointSize}px`;
-
-  el.style.position = "absolute";
-
-  screen.appendChild(el);
-  elements.push(el);
 }
 
 function rotateX({ x, y, z }, angle) {
@@ -95,20 +40,64 @@ function rotateY({ x, y, z }, angle) {
   };
 }
 
+const planeSize = 100;
+
+function createElement() {
+  const el = document.createElement("p");
+  el.innerText = "x";
+  el.style.width = `${pointSize}px`;
+  el.style.height = `${pointSize}px`;
+
+  el.style.position = "absolute";
+
+  screen.appendChild(el);
+  elements.push(el);
+}
+
+const radius = 10;
+
+const qualityX = 20;
+const qualityY = 30;
+
+for (let i = 0; i < qualityX; i++) {
+  const tSin = Math.sin((i / qualityX) * Math.PI);
+  const tCos = Math.cos((i / qualityX) * Math.PI);
+
+  for (let j = 0; j < qualityY; j++) {
+    const pSin = Math.sin((j / qualityY) * (Math.PI * 2));
+    const pCos = Math.cos((j / qualityY) * (Math.PI * 2));
+
+    const x = radius * tSin * pCos;
+    const y = radius * tSin * pSin;
+    const z = radius * tCos;
+
+    const el = document.createElement("p");
+    el.innerText = "x";
+    el.style.width = `${pointSize}px`;
+    el.style.height = `${pointSize}px`;
+
+    el.style.position = "absolute";
+
+    screen.appendChild(el);
+
+    points.push({ x, y, z, element: el });
+  }
+}
+
 function animate(delta) {
-  for (let i = 0; i < points.length; i++) {
-    let position = { ...points[i] };
+  for (const point of points) {
+    let position = { ...point };
 
     const angle = delta * 0.001;
 
     const rotatedX = rotateX(position, angle);
     let rotatedXY = rotateY(rotatedX, angle);
-    rotatedXY.z += 5;
+    rotatedXY.z += 25;
 
     const coords = cartesianToScreen(to2D(rotatedXY));
 
-    elements[i].style.left = `calc(${coords.x}% - ${pointSize / 2}px)`;
-    elements[i].style.top = `calc(${coords.y}% - ${pointSize / 2}px)`;
+    point.element.style.left = `calc(${coords.x}% - ${pointSize / 2}px)`;
+    point.element.style.top = `calc(${coords.y}% - ${pointSize / 2}px)`;
   }
 
   requestAnimationFrame(animate);

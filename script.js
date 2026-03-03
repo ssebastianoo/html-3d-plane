@@ -40,8 +40,6 @@ function rotateY({ x, y, z }, angle) {
   };
 }
 
-const planeSize = 100;
-
 function createElement() {
   const el = document.createElement("p");
   el.innerText = "x";

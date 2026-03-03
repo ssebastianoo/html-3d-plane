@@ -2,4 +2,4 @@
 
 A 3D plane rendered using HTML elements
 
-![3D Plane](demo.mp4)
+<video src="demo.mp4" autoplay loop muted playsinline width="600"></video>
